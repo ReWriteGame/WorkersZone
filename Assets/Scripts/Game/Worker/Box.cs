@@ -1,18 +1,30 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Box : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField] private NavMeshObstacle obstacle;
+
+    public void Used()
     {
-        
+        DisableObstacleMode();
     }
 
-    // Update is called once per frame
-    void Update()
+    public void NotUsed()
     {
-        
+        EnableObstacleMode();
     }
+
+    public void EnableObstacleMode()
+    {
+        obstacle.enabled = true;
+    }
+
+    public void DisableObstacleMode()
+    {
+        obstacle.enabled = false;
+    }
+
 }
