@@ -10,8 +10,10 @@ public class Worker : MonoBehaviour
     [SerializeField] private Transform targetToMove;
     [SerializeField] private float moveSpeed;
 
-    public Action<Box> OnTakeBox;
-    public Action<Box> OnPutBox;
+    public Action<Worker> OnTakeBox;
+    public Action<Worker> OnPutBox;
+    public Action<Worker> OnDestroyWorker;
+    //public Action<Worker> OnFinishWork;
 
 
     private bool isBusy = false;
@@ -20,6 +22,12 @@ public class Worker : MonoBehaviour
 
 
     public NavMeshAgent Agent { get => agent; set => agent = value; }
+    public Box TakedBox => takedBox;
+
+    private void OnDestroy()
+    {
+        OnDestroyWorker?.Invoke(this);
+    }
 
     public void MoveToPoint(Vector3 position)
     {
@@ -36,9 +44,11 @@ public class Worker : MonoBehaviour
         //if (takedBox == null) return;// если взять коробку если уже воркер занят 
         box.transform.parent = transform;
         box.transform.localPosition = Vector3.up;
+        box.transform.localRotation = Quaternion.identity;
         takedBox = box;
         takedBox.Used();
         isBusy = true;
+        OnTakeBox?.Invoke(this);
     }
 
     public void PutBox()
@@ -48,6 +58,7 @@ public class Worker : MonoBehaviour
         takedBox.NotUsed();
         takedBox = null;
         isBusy = false;
+        OnPutBox?.Invoke(this);
     }
 
     private void Update()//temp
