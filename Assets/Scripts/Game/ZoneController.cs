@@ -8,7 +8,7 @@ using System;
 [RequireComponent(typeof(BoxCollider))]
 public class ZoneController : MonoBehaviour
 {
-    [SerializeField] private NavMeshSurface navMeshSurfaceZone;
+    /*[SerializeField] private NavMeshSurface navMeshSurfaceZone;
     [SerializeField] private List<Worker> workers;
     [SerializeField] private List<Spot> spots;
     [SerializeField] private List<Box> boxes;
@@ -68,7 +68,7 @@ public class ZoneController : MonoBehaviour
 
         if (other.gameObject.TryGetComponent(out Spot spot))
             RemoveSpotFromSystem(spot);
-    }*/
+    }
 
 
     private Spot GetClosestSpot(Vector3 position)// rewrite with nawmesh distance
@@ -123,7 +123,7 @@ public class ZoneController : MonoBehaviour
 
         yield return null;
         yield return new WaitUntil(() => !worker.Agent.hasPath);
-        worker.TakeBox(box);
+        //worker.TakeBox(box);
     }
 
     private IEnumerator WorkerMoveToSpotRoutine(Worker worker, Spot spot)
@@ -143,7 +143,7 @@ public class ZoneController : MonoBehaviour
         workers.Add(worker);
         worker.EnableNavMeshMove();
 
-        worker.OnTakeBox += WorkerMoveToClosestSpot;
+        worker.OnTakeTargetBox += WorkerMoveToClosestSpot;
         worker.OnPutBox += WorkerTakeClosestBox;
         worker.OnDestroyWorker += RemoveWorkerFromSystem;
     }
@@ -153,7 +153,7 @@ public class ZoneController : MonoBehaviour
         workers.Remove(worker);
         //worker.DisableNavMeshMove();
 
-        worker.OnTakeBox -= WorkerMoveToClosestSpot;
+        worker.OnTakeTargetBox -= WorkerMoveToClosestSpot;
         worker.OnPutBox -= WorkerTakeClosestBox;
         worker.OnDestroyWorker -= RemoveWorkerFromSystem;
     }
@@ -180,5 +180,5 @@ public class ZoneController : MonoBehaviour
         spot.OnTakeBox -= RemoveBoxFromSystem;
     }
 
-
+    */
 }

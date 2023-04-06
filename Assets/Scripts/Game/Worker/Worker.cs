@@ -11,15 +11,12 @@ public class Worker : MonoBehaviour
     [SerializeField] private Rigidbody rb;
     [SerializeField] private ScoreCounter distancePassed;
 
-    public Action<Worker> OnTakeBox;
+    public Action<Worker> OnTakeTargetBox;
     public Action<Worker> OnPutBox;
     public Action<Worker> OnEndPathMoveToTarget;
-    //public Action<Worker> OnTarget;
     public Action<Worker> OnDestroyWorker;
     //public Action<Worker> OnFinishWork;
 
-    public Action<Box> OnTakeTargetBox;
-    public Action<Box> OnLoseTargetBox;
 
     [SerializeField] private Box takedBox;
     [SerializeField] private Box targetBox;
@@ -51,7 +48,7 @@ public class Worker : MonoBehaviour
         //box.SetWorker(this);
         targetBox = box;
         targetMove = targetBox.transform;
-        OnTakeTargetBox?.Invoke(box);
+        //OnTakeTargetBox?.Invoke(box);
     }
 
     public void ResetTargetBox()
@@ -62,23 +59,23 @@ public class Worker : MonoBehaviour
         Box box = targetBox;
         //targetBox.ResetWorker();
         targetBox = null;
-        OnLoseTargetBox?.Invoke(box);
+        //OnLoseTargetBox?.Invoke(box);
     }
 
-    public void TakeBox(Box box)
+    public void TakeTargetBox()
     {
-        if (box == null) return;// если взять коробку если уже воркер занят 
-        box.transform.parent = transform;
-        box.transform.localPosition = Vector3.up * 1.3f;
-        box.transform.localRotation = Quaternion.Euler(0, 0, 0);
-        Debug.Log("take box ");
+        if (targetBox == null) return;// если взять коробку если уже воркер занят 
+        targetBox.transform.parent = transform;
+        targetBox.transform.localPosition = Vector3.up * 1.3f;
+        targetBox.transform.localRotation = Quaternion.Euler(0, 0, 0);
         //ResetTargetBox();
         targetMove = null;
-        targetBox = null;/////////////
+        
 
-        takedBox = box;
-       takedBox.Used();
-        OnTakeBox?.Invoke(this);
+        takedBox = targetBox;
+        //targetBox = null;/////////////
+        takedBox.Used();
+        OnTakeTargetBox?.Invoke(this);
     }
 
     public void PutBox()
@@ -103,7 +100,6 @@ public class Worker : MonoBehaviour
     }
     public void MoveToTargetNavMesh()
     {
-        Debug.Log("move to target " + agent.isStopped);
         if (moveCoroutine != null) StopCoroutine(moveCoroutine);
         moveCoroutine = StartCoroutine(MoveToTargetNavMeshRoutine());
     }
@@ -130,7 +126,7 @@ public class Worker : MonoBehaviour
         
 
         StopMoveToTargetNavMesh();
-        Debug.Log("end path" + Time.deltaTime);
+        //Debug.Log("end path" + Time.deltaTime);
         OnEndPathMoveToTarget?.Invoke(this);
         
     }
