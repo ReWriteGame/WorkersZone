@@ -2,31 +2,35 @@ using System;
 using Modules.Score;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class ScoreCounterVisual : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI output;
-    [SerializeField] private ScoreCounter scoreCounter;
     [SerializeField] private int numberOfCharacters = 2;
 
+    private ScoreCounter scoreCounter;
 
-    private void Start()
+    public TextMeshProUGUI Output => output;
+
+    public void SetScoreCounter(ScoreCounter scoreCounter)
     {
+        if (this.scoreCounter != null) Unsubscribe();
+        this.scoreCounter = scoreCounter;
+        Subscribe();
         UpdateScore(scoreCounter.Value);
     }
-
 
     public void UpdateScore(float value)
     {
         output.text = $"{Math.Round(value, numberOfCharacters)}";
     }
 
-    private void OnEnable()
-    {
+    private void Subscribe()
+    { 
         scoreCounter.OnChangeValue += UpdateScore;
     }
-    private void OnDisable()
+
+    private void Unsubscribe()
     {
         scoreCounter.OnChangeValue -= UpdateScore;
     }
