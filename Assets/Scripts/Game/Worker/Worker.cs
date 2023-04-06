@@ -18,7 +18,7 @@ public class Worker : MonoBehaviour
     //public Action<Worker> OnFinishWork;
 
 
-    [SerializeField] private Box takedBox;
+    [SerializeField] private Box storeBoxes;
     [SerializeField] private Box targetBox;
     private Vector3 lastPosition;
     [SerializeField] private Transform targetMove;
@@ -26,7 +26,7 @@ public class Worker : MonoBehaviour
     private Coroutine moveCoroutine;
 
     public NavMeshAgent Agent => agent;
-    public Box TakedBox => takedBox;
+    public Box TakedBox => storeBoxes;
     public ScoreCounter DistancePassed => distancePassed;
     public Box TargetBox => targetBox;
 
@@ -69,21 +69,23 @@ public class Worker : MonoBehaviour
         targetBox.transform.localPosition = Vector3.up * 1.3f;
         targetBox.transform.localRotation = Quaternion.Euler(0, 0, 0);
         //ResetTargetBox();
-        targetMove = null;
         
 
-        takedBox = targetBox;
-        //targetBox = null;/////////////
-        takedBox.Used();
+        storeBoxes = targetBox;
+        
+        storeBoxes.Used();
+        targetBox = null;/////////////
+        targetMove = null;
+
         OnTakeTargetBox?.Invoke(this);
     }
 
     public void PutBox()
     {
-        if (takedBox == null) return;
-        takedBox.transform.parent = null;
-        takedBox.NotUsed();
-        takedBox = null;
+        if (storeBoxes == null) return;
+        storeBoxes.transform.parent = null;
+        storeBoxes.NotUsed();
+        storeBoxes = null;
         OnPutBox?.Invoke(this);
     }
 

@@ -44,16 +44,22 @@ public class TestZone : MonoBehaviour
 
     }
 
-   
 
-  
 
+
+    private Box GetClosestBox(Vector3 position)
+    {
+        if (boxes.Count <= 0) return null;
+        float distance = boxes.Min(x => (x.transform.position - position).magnitude);
+        return boxes.FirstOrDefault(x => (x.transform.position - position).magnitude <= distance);
+    }
 
     private void AddWorkerInSystem(Worker worker)
     {
         worker.OnEndPathMoveToTarget += WorkerTakeBox;
 
         worker.OnTakeTargetBox += WorkerMoveToSpot;
+        //worker.OnPutBox += WorkerPutBox;
     }
 
     private void WorkerTakeBox(Worker worker)
@@ -63,5 +69,10 @@ public class TestZone : MonoBehaviour
     private void WorkerMoveToSpot(Worker worker)
     {
         worker.MoveToPointNavMesh(spots[0].transform);
+    }
+    private void WorkerPutBox(Worker worker)
+    {
+        worker.SetTargetBox(boxes[2]);
+        worker.TakeTargetBox();
     }
 }
