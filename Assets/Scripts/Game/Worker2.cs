@@ -9,8 +9,8 @@ public class Worker2 : MonoBehaviour
 {
     [SerializeField] private NavMeshAgent agent;
     [SerializeField] private Rigidbody rb;
-    [SerializeField] private Transform targetMove;
-    [SerializeField] private bool isStopped;
+    [SerializeField] private Transform targetMove;// hide
+    [SerializeField] private bool isStopped;//temp
 
     public Action<Worker2> OnTakeTargetBox;
     public Action<Worker2> OnPutBox;
@@ -19,7 +19,12 @@ public class Worker2 : MonoBehaviour
 
     private Coroutine moveCoroutine;
 
-  
+    [SerializeField] private Box storeBoxes;
+    [SerializeField] private Box targetBox;
+
+    public Box TargetBox => targetBox;
+
+    public Box StoreBoxes => storeBoxes;
 
     private void Awake()
     {
@@ -57,6 +62,60 @@ public class Worker2 : MonoBehaviour
         if (moveCoroutine != null) StopCoroutine(moveCoroutine);
         agent.isStopped = true;
     }
+
+
+    /// ///////////////////////////////////////////////////////////////////
+    
+    public void SetTargetBox(Box box)
+    {
+        targetBox = box;
+        SetTargetMove(box.transform);
+
+        //box.SetWorker(this);
+
+        //OnTakeTargetBox?.Invoke(box);
+    }
+
+    public void ResetTargetBox()
+    {
+        targetBox = null;
+        ResetTargetMove();
+
+        if (!targetBox) return;
+        Box box = targetBox;
+        //targetBox.ResetWorker();
+        targetBox = null;
+        //OnLoseTargetBox?.Invoke(box);
+    }
+
+    public void TakeTargetBox()
+    {
+        if (targetBox == null) return;// если взять коробку если уже воркер занят 
+        targetBox.transform.parent = transform;
+        targetBox.transform.localPosition = Vector3.up * 1.3f;
+        targetBox.transform.localRotation = Quaternion.Euler(0, 0, 0);
+
+
+        storeBoxes = targetBox;
+
+        storeBoxes.Used();
+        ResetTargetBox();
+
+        OnTakeTargetBox?.Invoke(this);
+    }
+
+    public void PutBox()
+    {
+        if (storeBoxes == null) return;
+        storeBoxes.transform.parent = null;
+        storeBoxes.NotUsed();
+        storeBoxes = null;
+        OnPutBox?.Invoke(this);
+    }
+
+
+    /// ///////////////////////////////////////////////////////////////////
+
 
     private IEnumerator MoveToTargetNavMeshRoutine()
     {

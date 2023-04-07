@@ -32,7 +32,8 @@ public class TestZone : MonoBehaviour
 
         AddWorkerInSystem(workers[0]);
 
-        workers[0].SetTargetMove(boxes[0].transform);
+        //workers[0].SetTargetMove(boxes[0].transform);
+        workers[0].SetTargetBox(boxes[0]);
         workers[0].MoveToTargetNavMesh();
 
 
@@ -62,21 +63,21 @@ public class TestZone : MonoBehaviour
     {
         worker.OnEndPathMoveToTarget += WorkerTakeBox;
 
-        //worker.OnTakeTargetBox += WorkerMoveToSpot;
-        //worker.OnPutBox += WorkerPutBox;
+        worker.OnTakeTargetBox += WorkerMoveToSpot;
+        worker.OnPutBox += WorkerPutBox;
     }
 
     private void WorkerTakeBox(Worker2 worker)
     {
-      
-        worker.MoveToPointNavMesh(spots[Random.Range(0, 3)].transform);
+        worker.TakeTargetBox();
     }
-    /*private void WorkerMoveToSpot(Worker2 worker)
+    private void WorkerMoveToSpot(Worker2 worker)
     {
         worker.MoveToPointNavMesh(spots[0].transform);
-        worker.MoveToTargetNavMesh();
     }
     private void WorkerPutBox(Worker2 worker)
     {
-    }*/
+        worker.SetTargetBox(boxes[1]);
+        worker.MoveToTargetNavMesh();
+    }
 }
