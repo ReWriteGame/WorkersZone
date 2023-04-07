@@ -1,7 +1,6 @@
 using Modules.Score;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -35,6 +34,7 @@ public class Worker : MonoBehaviour
         StartCoroutine(CalculatePathToTargetRoutine());
         if (agent.isOnNavMesh) agent.isStopped = true;
     }
+
     private void OnDestroy()
     {
         OnDestroyWorker?.Invoke(this);
@@ -42,19 +42,6 @@ public class Worker : MonoBehaviour
 
     private void Update()
     {
-
-        /*if (Input.GetMouseButtonDown(0))//temp
-        {
-            RaycastHit hit;
-            if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit))
-                MoveToPointNavMesh(hit.point);
-        }
-
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            Agent.Stop();
-        }*/
-
         AddPassedDistance();
     }
 
@@ -102,6 +89,7 @@ public class Worker : MonoBehaviour
         ResetTargetMove();
         OnEndPathMoveToTarget?.Invoke(this);
     }
+
     private IEnumerator CalculatePathToTargetRoutine()
     {
         WaitForSeconds waitTime = new WaitForSeconds(.1f);
@@ -123,8 +111,6 @@ public class Worker : MonoBehaviour
         box.SetWorker(this);
         targetBox = box;
         SetTargetMove(box.transform);
-
-        //OnTakeTargetBox?.Invoke(box);
     }
 
     public void ResetTargetBox()
@@ -132,12 +118,11 @@ public class Worker : MonoBehaviour
         if (targetBox != null) targetBox.ResetWorker();
         targetBox = null;
         ResetTargetMove();
-        //OnLoseTargetBox?.Invoke(box);
     }
 
-    public void TakeTargetBox()
+    public void TakeTargetBox()// test 
     {
-        if (targetBox == null) return;// если взять коробку если уже воркер занят 
+        if (targetBox == null) return; 
         targetBox.transform.parent = transform;
         targetBox.transform.localPosition = Vector3.up * 1.3f;
         targetBox.transform.localRotation = Quaternion.Euler(0, 0, 0);
