@@ -33,7 +33,7 @@ public class Worker : MonoBehaviour
     private void Awake()
     {
         StartCoroutine(CalculatePathToTargetRoutine());
-        if(agent.isOnNavMesh) agent.isStopped = true;
+        if (agent.isOnNavMesh) agent.isStopped = true;
     }
     private void OnDestroy()
     {
@@ -119,17 +119,17 @@ public class Worker : MonoBehaviour
 
     public void SetTargetBox(Box box)
     {
-        if(!box)return;
+        if (!box) return;
         box.SetWorker(this);
         targetBox = box;
         SetTargetMove(box.transform);
-      
+
         //OnTakeTargetBox?.Invoke(box);
     }
 
     public void ResetTargetBox()
     {
-        if(targetBox != null) targetBox.ResetWorker();
+        if (targetBox != null) targetBox.ResetWorker();
         targetBox = null;
         ResetTargetMove();
         //OnLoseTargetBox?.Invoke(box);
