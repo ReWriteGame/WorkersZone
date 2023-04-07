@@ -117,17 +117,18 @@ public class Worker : MonoBehaviour
 
     public void SetTargetBox(Box box)
     {
+        box.SetWorker(this);
         targetBox = box;
         SetTargetMove(box.transform);
-
+      
         //OnTakeTargetBox?.Invoke(box);
     }
 
     public void ResetTargetBox()
     {
+        targetBox.ResetWorker();
         targetBox = null;
         ResetTargetMove();
-
         //OnLoseTargetBox?.Invoke(box);
     }
 
