@@ -231,6 +231,7 @@ GameObject:
   - component: {fileID: 7668969990867353205}
   - component: {fileID: 6504938903530933113}
   - component: {fileID: 4482512091034636688}
+  - component: {fileID: 981320499577718651}
   m_Layer: 6
   m_Name: Worker
   m_TagString: Untagged
@@ -325,7 +326,10 @@ MonoBehaviour:
       valueLimit:
         minValue: 0
         maxValue: 0
+  storeBoxes: {fileID: 0}
   targetBox: {fileID: 0}
+  targetMove: {fileID: 0}
+  isStopped: 0
 --- !u!114 &4482512091034636688
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -340,6 +344,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   worker: {fileID: 6504938903530933113}
   scoreCounterVisual: {fileID: 1465569068796939999}
+--- !u!114 &981320499577718651
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7516635025522711168}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6e2a93c69ca3c146b828ee679055291, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  agent: {fileID: 7668969990867353205}
+  rb: {fileID: 9079611156571052327}
+  targetMove: {fileID: 0}
+  isStopped: 0
 --- !u!1001 &1853289832999509776
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -95,9 +95,6 @@ public class Worker : MonoBehaviour
         //ResetTargetBox();
         targetMove = point;
        
-
-        //if (moveCoroutine != null) StopCoroutine(moveCoroutine);
-        //moveCoroutine = StartCoroutine(MoveToTargetNavMeshRoutine());
         MoveToTargetNavMesh();
     }
     public void MoveToTargetNavMesh()
@@ -108,7 +105,8 @@ public class Worker : MonoBehaviour
 
     public void StopMoveToTargetNavMesh()
     {
-        //if (moveCoroutine != null) StopCoroutine(moveCoroutine);
+        Debug.Log(1555);
+        if (moveCoroutine != null) StopCoroutine(moveCoroutine);
         agent.isStopped = true;
     }
 
@@ -138,11 +136,7 @@ public class Worker : MonoBehaviour
         WaitForSeconds waitTime = new WaitForSeconds(.1f);
         while (true)
         {
-            //if (agent.isOnNavMesh && targetBox)
-            //    agent.destination = targetBox.transform.position;
-            ////else agent.ResetPath();/// use metod with event?
-
-            if (agent.isOnNavMesh && targetMove != null)
+                  if (agent.isOnNavMesh && targetMove != null)
                 agent.destination = targetMove.position;
             isStopped = agent.isStopped;
 

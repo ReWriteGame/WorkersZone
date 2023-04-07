@@ -287,7 +287,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   navMeshSurfaceZone: {fileID: 157965614}
   workers:
-  - {fileID: 1107810133}
+  - {fileID: 277859759}
   spots:
   - {fileID: 2104602515}
   - {fileID: 1574561569}
@@ -299,6 +299,18 @@ MonoBehaviour:
   - {fileID: 359638565}
   point: {x: 0, y: 0, z: 0}
   boxColliderZone: {fileID: 0}
+--- !u!114 &277859759 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 981320499577718651, guid: 5a82cbb2bb65c214f878868924e0c4ee,
+    type: 3}
+  m_PrefabInstance: {fileID: 1875834933}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6e2a93c69ca3c146b828ee679055291, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
@@ -1205,18 +1217,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8815c533a0564f54798475e745294231, type: 3}
---- !u!114 &1107810133 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6504938903530933113, guid: 5a82cbb2bb65c214f878868924e0c4ee,
-    type: 3}
-  m_PrefabInstance: {fileID: 1875834933}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0f261da4cd256554d9ee88373cbfc786, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &1127749317
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2253,7 +2253,7 @@ PrefabInstance:
     - target: {fileID: 9122415882430527129, guid: 5a82cbb2bb65c214f878868924e0c4ee,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.85
+      value: -10.72
       objectReference: {fileID: 0}
     - target: {fileID: 9122415882430527129, guid: 5a82cbb2bb65c214f878868924e0c4ee,
         type: 3}
@@ -2263,7 +2263,7 @@ PrefabInstance:
     - target: {fileID: 9122415882430527129, guid: 5a82cbb2bb65c214f878868924e0c4ee,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.37
+      value: -3.65
       objectReference: {fileID: 0}
     - target: {fileID: 9122415882430527129, guid: 5a82cbb2bb65c214f878868924e0c4ee,
         type: 3}
@@ -2300,7 +2300,9 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 6504938903530933113, guid: 5a82cbb2bb65c214f878868924e0c4ee, type: 3}
+    - {fileID: 4482512091034636688, guid: 5a82cbb2bb65c214f878868924e0c4ee, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 5a82cbb2bb65c214f878868924e0c4ee, type: 3}
 --- !u!114 &1951513599 stripped
 MonoBehaviour:
