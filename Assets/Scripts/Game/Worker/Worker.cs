@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
+[SelectionBase]
 public class Worker : MonoBehaviour
 {
     [SerializeField] private NavMeshAgent agent;
@@ -32,7 +33,7 @@ public class Worker : MonoBehaviour
     private void Awake()
     {
         StartCoroutine(CalculatePathToTargetRoutine());
-        agent.isStopped = true;
+        if(agent.isOnNavMesh) agent.isStopped = true;
     }
     private void OnDestroy()
     {
@@ -61,6 +62,7 @@ public class Worker : MonoBehaviour
 
     public void SetTargetMove(Transform target)
     {
+        agent.ResetPath();
         targetMove = target;
         agent.isStopped = true;
     }
@@ -117,6 +119,7 @@ public class Worker : MonoBehaviour
 
     public void SetTargetBox(Box box)
     {
+        if(!box)return;
         box.SetWorker(this);
         targetBox = box;
         SetTargetMove(box.transform);
@@ -126,7 +129,7 @@ public class Worker : MonoBehaviour
 
     public void ResetTargetBox()
     {
-        targetBox.ResetWorker();
+        if(targetBox != null) targetBox.ResetWorker();
         targetBox = null;
         ResetTargetMove();
         //OnLoseTargetBox?.Invoke(box);

@@ -12,11 +12,10 @@ public class TestZone : MonoBehaviour
     [SerializeField] private List<Worker> workers;
     [SerializeField] private List<Spot> spots;
     [SerializeField] private List<Box> boxes;
-    [SerializeField] private Vector3 point;
 
-    [SerializeField] private BoxCollider boxColliderZone;
+    private BoxCollider boxColliderZone;
 
-    //public Action OnChangeSystem;
+    public Action OnChangeSystem;
 
     private void Awake()
     {
@@ -25,46 +24,36 @@ public class TestZone : MonoBehaviour
         boxColliderZone.center = navMeshSurfaceZone.center;
         boxColliderZone.isTrigger = true;
 
-        //OnChangeSystem += RecalculateWorkerMovement;
+        OnChangeSystem += RecalculateWorkerMovement;
     }
 
-    private IEnumerator Start()
-    {
-        yield return new WaitForSeconds(2);
-        AddWorkerInSystem(workers[0]);
-        StartWorkerInSystem(workers[0]);
 
-        AddWorkerInSystem(workers[1]);
-        StartWorkerInSystem(workers[1]);
 
-        print("do");
-    }
-
-    /*private void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.TryGetComponent(out Worker worker))
         {
 
             // check if object is in array
-            //AddWorkerInSystem(worker);
-            //StartWorkerInSystem(worker);
-           // OnChangeSystem?.Invoke();
+            AddWorkerInSystem(worker);
+            StartWorkerInSystem(worker);
+            OnChangeSystem?.Invoke();
         }
 
         if (other.gameObject.TryGetComponent(out Box box))
         {
             AddBoxInSystem(box);
-           // OnChangeSystem?.Invoke();
+            OnChangeSystem?.Invoke();
         }
 
         if (other.gameObject.TryGetComponent(out Spot spot))
         {
             AddSpotInSystem(spot);
-           // OnChangeSystem?.Invoke();
+            OnChangeSystem?.Invoke();
         }
-    }*/
+    }
 
-    /*private void OnTriggerExit(Collider other)
+    private void OnTriggerExit(Collider other)
     {
         if (other.gameObject.TryGetComponent(out Worker worker))
             RemoveWorkerFromSystem(worker);
@@ -76,11 +65,21 @@ public class TestZone : MonoBehaviour
             RemoveSpotFromSystem(spot);
     }
 
-    /*private void RecalculateWorkerMovement()
+    private void RecalculateWorkerMovement()
     {
+        foreach (Box box in boxes)
+            if (!box.IsUsed) box.ResetWorker();
+
+
         foreach (Worker worker in workers)
-            WorkerTakeClosestBox(worker);
-    }*/
+        {
+            if (!worker.StoreBoxes)
+            {
+                worker.ResetTargetBox();
+                StartWorkerInSystem(worker);
+            }
+        }
+    }
 
 
     /// ///////////////////////////////////// //////////////////////////////////
@@ -108,7 +107,8 @@ public class TestZone : MonoBehaviour
 
     private void WorkerTakeBox(Worker worker)
     {
-        worker.TakeTargetBox();
+        if (worker.StoreBoxes == null)
+            worker.TakeTargetBox();
     }
     private void WorkerMoveToSpot(Worker worker)
     {
@@ -127,15 +127,16 @@ public class TestZone : MonoBehaviour
 
     private void StartWorkerInSystem(Worker worker)
     {
+        if (worker.TargetBox) return;
         worker.SetTargetBox(GetClosestFreeBox(worker.transform.position));
         worker.MoveToTargetNavMesh();
     }
 
     private void AddWorkerInSystem(Worker worker)
     {
-        //if (workers.Contains(worker)) return;
-        //workers.Add(worker);
-        //worker.EnableNavMeshMove();
+        if (workers.Contains(worker)) return;
+        workers.Add(worker);
+        worker.EnableNavMeshMove();
 
         worker.OnEndPathMoveToTarget += WorkerTakeBox;
         worker.OnTakeTargetBox += WorkerMoveToSpot;
@@ -154,13 +155,13 @@ public class TestZone : MonoBehaviour
     }
 
 
-    public void AddBoxInSystem(Box worker)
+    public void AddBoxInSystem(Box box)
     {
-        boxes.Add(worker);
+        boxes.Add(box);
     }
-    public void RemoveBoxFromSystem(Box worker)
+    public void RemoveBoxFromSystem(Box box)
     {
-        boxes.Remove(worker);
+        boxes.Remove(box);
     }
 
 
