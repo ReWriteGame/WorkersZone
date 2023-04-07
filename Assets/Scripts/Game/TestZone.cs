@@ -28,25 +28,26 @@ public class TestZone : MonoBehaviour
         //OnChangeSystem += RecalculateWorkerMovement;
     }
 
-    private void Start()
+    private IEnumerator Start()
     {
-
-      /*  AddWorkerInSystem(workers[0]);
+        yield return new WaitForSeconds(2);
+        AddWorkerInSystem(workers[0]);
         StartWorkerInSystem(workers[0]);
 
         AddWorkerInSystem(workers[1]);
         StartWorkerInSystem(workers[1]);
-      */
+
+        print("do");
     }
 
-    private void OnTriggerEnter(Collider other)
+    /*private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.TryGetComponent(out Worker worker))
         {
 
             // check if object is in array
-            AddWorkerInSystem(worker);
-            StartWorkerInSystem(worker);
+            //AddWorkerInSystem(worker);
+            //StartWorkerInSystem(worker);
            // OnChangeSystem?.Invoke();
         }
 
@@ -61,7 +62,7 @@ public class TestZone : MonoBehaviour
             AddSpotInSystem(spot);
            // OnChangeSystem?.Invoke();
         }
-    }
+    }*/
 
     /*private void OnTriggerExit(Collider other)
     {
@@ -115,7 +116,6 @@ public class TestZone : MonoBehaviour
         if (closestSpot == null) return;
         worker.MoveToPointNavMesh(closestSpot.transform);
     }
-
     private void WorkerPutBox(Worker worker)
     {
         Box closestBox = GetClosestFreeBox(worker.transform.position);
@@ -123,6 +123,7 @@ public class TestZone : MonoBehaviour
         worker.SetTargetBox(closestBox);
         worker.MoveToTargetNavMesh();
     }
+
 
     private void StartWorkerInSystem(Worker worker)
     {
@@ -132,19 +133,14 @@ public class TestZone : MonoBehaviour
 
     private void AddWorkerInSystem(Worker worker)
     {
-        if (workers.Contains(worker)) return;
-        workers.Add(worker);
-        worker.EnableNavMeshMove();
+        //if (workers.Contains(worker)) return;
+        //workers.Add(worker);
+        //worker.EnableNavMeshMove();
 
         worker.OnEndPathMoveToTarget += WorkerTakeBox;
         worker.OnTakeTargetBox += WorkerMoveToSpot;
         worker.OnPutBox += WorkerPutBox;
     }
-    
- 
-
-
- 
     private void RemoveWorkerFromSystem(Worker worker)
     {
         if (!workers.Contains(worker)) return;
@@ -157,22 +153,22 @@ public class TestZone : MonoBehaviour
         //worker.OnDestroyWorker -= RemoveWorkerFromSystem;
     }
 
+
     public void AddBoxInSystem(Box worker)
     {
         boxes.Add(worker);
     }
-
     public void RemoveBoxFromSystem(Box worker)
     {
         boxes.Remove(worker);
     }
+
 
     private void AddSpotInSystem(Spot spot)
     {
         spots.Add(spot);
         spot.OnTakeBox += RemoveBoxFromSystem;
     }
-
     private void RemoveSpotFromSystem(Spot spot)
     {
         spots.Remove(spot);
