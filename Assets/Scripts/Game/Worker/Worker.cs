@@ -1,14 +1,11 @@
 using Modules.Score;
 using System;
-using System.Collections;
 using UnityEngine;
-using UnityEngine.AI;
 
 [SelectionBase]
 public class Worker : MonoBehaviour
 {
-    [SerializeField] private NavMeshAgent agent;
-    [SerializeField] private Rigidbody rb;
+    [SerializeField] private WorkerNavMove movement;
     [SerializeField] private ScoreCounter distancePassed;
 
     public Action<Worker> OnTakeTargetBox;
@@ -17,100 +14,46 @@ public class Worker : MonoBehaviour
     public Action<Worker> OnStartMoveWorker;
     public Action<Worker> OnEndMoveWorker;
 
-
-
-    [SerializeField] private Box storeBoxes;
-    [SerializeField] private Box targetBox;
-    [SerializeField] private Transform targetMove;
+    private Box storeBoxes;
+    private Box targetBox;
+    private Transform targetMove;
     private Vector3 lastPosition;
-    private Coroutine moveCoroutine;
 
-    public NavMeshAgent Agent => agent;
     public ScoreCounter DistancePassed => distancePassed;
     public Box TargetBox => targetBox;
     public Box StoreBoxes => storeBoxes;
     public Transform TargetMove => targetMove;
+    public WorkerNavMove Movement => movement;
 
+
+    
+    private void Update()
+    {
+        if (movement.Agent.isOnNavMesh) AddPassedDistance();
+    }
     private void Awake()
     {
-        StartCoroutine(CalculatePathToTargetRoutine());
-        DisableNavMeshMove();
-        if (agent.isOnNavMesh) agent.isStopped = true;
+        movement.OnStartMoveWorker += OnStartMove;
+        movement.OnEndMoveWorker += OnEndMove;
     }
 
     private void OnDestroy()
     {
+        movement.OnStartMoveWorker -= OnStartMove;
+        movement.OnEndMoveWorker -= OnEndMove;
         OnDestroyWorker?.Invoke(this);
     }
 
-    private void Update()
+    private void OnStartMove()
     {
-        if (agent.isOnNavMesh) AddPassedDistance();
-    }
-
-    //////////////////////////////// Based move logic ////////////////////////////////
-
-    public void SetTargetMove(Transform target)
-    {
-        if (!agent.isOnNavMesh) return;
-        agent.ResetPath();
-        targetMove = target;
-        agent.isStopped = true;
-    }
-
-    public void ResetTargetMove()
-    {
-        if (!agent.isOnNavMesh) return;
-        targetMove = null;
-        agent.ResetPath();
-        agent.isStopped = true;
-    }
-
-    public void MoveToPointNavMesh(Transform point)
-    {
-        if (!agent.isOnNavMesh) return;
-        SetTargetMove(point);
-        MoveToTargetNavMesh();
-    }
-
-    public void MoveToTargetNavMesh()
-    {
-        if (!agent.isOnNavMesh) return;
-        if (moveCoroutine != null) StopCoroutine(moveCoroutine);
-        moveCoroutine = StartCoroutine(MoveToTargetNavMeshRoutine());
-    }
-
-    public void StopMoveToTargetNavMesh()
-    {
-        if (!agent.isOnNavMesh) return;
-        if (moveCoroutine != null) StopCoroutine(moveCoroutine);
-        agent.isStopped = true;
-    }
-
-    private IEnumerator MoveToTargetNavMeshRoutine()
-    {
-        if (targetMove == null) yield break;
         OnStartMoveWorker?.Invoke(this);
-        agent.isStopped = false;
-        yield return new WaitUntil(() => agent.hasPath && agent.remainingDistance <= agent.stoppingDistance);
+    }
 
-        StopMoveToTargetNavMesh();
-        ResetTargetMove();
+    private void OnEndMove()
+    {
         OnEndMoveWorker?.Invoke(this);
     }
 
-    private IEnumerator CalculatePathToTargetRoutine()
-    {
-        WaitForSeconds waitTime = new WaitForSeconds(.1f);
-        while (true)
-        {
-            if (agent.isOnNavMesh && targetMove != null)
-                agent.destination = targetMove.position;
-            //else ResetTargetMove();
-
-            yield return waitTime;
-        }
-    }
 
     //////////////////////////////// Box Actions ////////////////////////////////
 
@@ -119,14 +62,14 @@ public class Worker : MonoBehaviour
         if (!box) return;
         box.SetWorker(this);
         targetBox = box;
-        SetTargetMove(box.transform);
+        movement.SetTargetMove(box.transform);
     }
 
     public void ResetTargetBox()
     {
         if (targetBox != null) targetBox.ResetWorker();
         targetBox = null;
-        ResetTargetMove();
+        movement.ResetTargetMove();
     }
 
     public void TakeTargetBox()// test 
@@ -151,9 +94,7 @@ public class Worker : MonoBehaviour
         OnPutBox?.Invoke(this);
     }
 
-
     //////////////////////////////// Other logic ////////////////////////////////
-
 
     private void AddPassedDistance()
     {
@@ -162,17 +103,5 @@ public class Worker : MonoBehaviour
 
         distancePassed.IncreaseValue((lastPosition - currentPosition).magnitude);
         lastPosition = currentPosition;
-    }
-
-    public void EnableNavMeshMove()
-    {
-        rb.isKinematic = true;
-        agent.enabled = true;
-    }
-
-    public void DisableNavMeshMove()
-    {
-        agent.enabled = false;
-        rb.isKinematic = false;
     }
 }

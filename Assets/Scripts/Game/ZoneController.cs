@@ -137,7 +137,7 @@ public class ZoneController : MonoBehaviour
         Spot closestSpot = GetClosestSpot(worker.transform.position);
         //Spot closestSpot = GetRandomSpot(worker.transform.position);
         if (closestSpot == null) return;
-        worker.MoveToPointNavMesh(closestSpot.transform);
+        worker.Movement.MoveToPointNavMesh(closestSpot.transform);
     }
     private void WorkerPutBox(Worker worker)
     {
@@ -145,21 +145,21 @@ public class ZoneController : MonoBehaviour
         //Box closestBox = GetRandomFreeBox(worker.transform.position);
         if (closestBox == null) return;
         worker.SetTargetBox(closestBox);
-        worker.MoveToTargetNavMesh();
+        worker.Movement.MoveToTargetNavMesh();
     }
     
     private void StartWorkerInSystem(Worker worker)
     {
         if (worker.TargetBox) return;
         worker.SetTargetBox(GetClosestFreeBox(worker.transform.position));
-        worker.MoveToTargetNavMesh();
+        worker.Movement.MoveToTargetNavMesh();
     }
 
     private void AddWorkerInSystem(Worker worker)
     {
         if (workers.Contains(worker)) return;
         workers.Add(worker);
-        worker.EnableNavMeshMove();
+        worker.Movement.EnableNavMeshMove();
 
         worker.OnEndMoveWorker += WorkerTakeBox;
         worker.OnTakeTargetBox += WorkerMoveToSpot;
