@@ -161,7 +161,7 @@ public class ZoneController : MonoBehaviour
         workers.Add(worker);
         worker.EnableNavMeshMove();
 
-        worker.OnEndPathMoveToTarget += WorkerTakeBox;
+        worker.OnEndMoveWorker += WorkerTakeBox;
         worker.OnTakeTargetBox += WorkerMoveToSpot;
         worker.OnPutBox += WorkerPutBox;
         worker.OnDestroyWorker += RemoveWorkerFromSystem;
@@ -172,7 +172,7 @@ public class ZoneController : MonoBehaviour
         workers.Remove(worker);
         //worker.DisableNavMeshMove();
 
-        worker.OnEndPathMoveToTarget -= WorkerTakeBox;
+        worker.OnEndMoveWorker -= WorkerTakeBox;
         worker.OnTakeTargetBox -= WorkerMoveToSpot;
         worker.OnPutBox -= WorkerPutBox;
         worker.OnDestroyWorker -= RemoveWorkerFromSystem;

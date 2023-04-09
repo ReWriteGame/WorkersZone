@@ -13,8 +13,10 @@ public class Worker : MonoBehaviour
 
     public Action<Worker> OnTakeTargetBox;
     public Action<Worker> OnPutBox;
-    public Action<Worker> OnEndPathMoveToTarget;
     public Action<Worker> OnDestroyWorker;
+    public Action<Worker> OnStartMoveWorker;
+    public Action<Worker> OnEndMoveWorker;
+
 
 
     [SerializeField] private Box storeBoxes;
@@ -88,12 +90,13 @@ public class Worker : MonoBehaviour
     private IEnumerator MoveToTargetNavMeshRoutine()
     {
         if (targetMove == null) yield break;
+        OnStartMoveWorker?.Invoke(this);
         agent.isStopped = false;
         yield return new WaitUntil(() => agent.hasPath && agent.remainingDistance <= agent.stoppingDistance);
 
         StopMoveToTargetNavMesh();
         ResetTargetMove();
-        OnEndPathMoveToTarget?.Invoke(this);
+        OnEndMoveWorker?.Invoke(this);
     }
 
     private IEnumerator CalculatePathToTargetRoutine()
@@ -130,7 +133,7 @@ public class Worker : MonoBehaviour
     {
         if (targetBox == null) return;
         targetBox.transform.parent = transform;
-        targetBox.transform.localPosition = Vector3.up * 1.3f;
+        targetBox.transform.localPosition = Vector3.up * 2.3f;
         targetBox.transform.localRotation = Quaternion.Euler(0, 0, 0);
 
         storeBoxes = targetBox;
