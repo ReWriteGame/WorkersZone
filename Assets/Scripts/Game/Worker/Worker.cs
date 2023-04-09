@@ -32,6 +32,7 @@ public class Worker : MonoBehaviour
     private void Awake()
     {
         StartCoroutine(CalculatePathToTargetRoutine());
+        DisableNavMeshMove();
         if (agent.isOnNavMesh) agent.isStopped = true;
     }
 
@@ -42,13 +43,14 @@ public class Worker : MonoBehaviour
 
     private void Update()
     {
-        AddPassedDistance();
+        if (agent.isOnNavMesh) AddPassedDistance();
     }
 
     //////////////////////////////// Based move logic ////////////////////////////////
 
     public void SetTargetMove(Transform target)
     {
+        if (!agent.isOnNavMesh) return;
         agent.ResetPath();
         targetMove = target;
         agent.isStopped = true;
@@ -56,6 +58,7 @@ public class Worker : MonoBehaviour
 
     public void ResetTargetMove()
     {
+        if (!agent.isOnNavMesh) return;
         targetMove = null;
         agent.ResetPath();
         agent.isStopped = true;
@@ -63,18 +66,21 @@ public class Worker : MonoBehaviour
 
     public void MoveToPointNavMesh(Transform point)
     {
+        if (!agent.isOnNavMesh) return;
         SetTargetMove(point);
         MoveToTargetNavMesh();
     }
 
     public void MoveToTargetNavMesh()
     {
+        if (!agent.isOnNavMesh) return;
         if (moveCoroutine != null) StopCoroutine(moveCoroutine);
         moveCoroutine = StartCoroutine(MoveToTargetNavMeshRoutine());
     }
 
     public void StopMoveToTargetNavMesh()
     {
+        if (!agent.isOnNavMesh) return;
         if (moveCoroutine != null) StopCoroutine(moveCoroutine);
         agent.isStopped = true;
     }
@@ -122,7 +128,7 @@ public class Worker : MonoBehaviour
 
     public void TakeTargetBox()// test 
     {
-        if (targetBox == null) return; 
+        if (targetBox == null) return;
         targetBox.transform.parent = transform;
         targetBox.transform.localPosition = Vector3.up * 1.3f;
         targetBox.transform.localRotation = Quaternion.Euler(0, 0, 0);
@@ -158,10 +164,12 @@ public class Worker : MonoBehaviour
     public void EnableNavMeshMove()
     {
         rb.isKinematic = true;
+        agent.enabled = true;
     }
 
     public void DisableNavMeshMove()
     {
+        agent.enabled = false;
         rb.isKinematic = false;
     }
 }

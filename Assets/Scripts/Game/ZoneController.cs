@@ -10,6 +10,7 @@ using Random = UnityEngine.Random;
 public class ZoneController : MonoBehaviour
 {
     [SerializeField] private NavMeshSurface navMeshSurfaceZone;
+    [SerializeField] private float allDistance = 0;
     [SerializeField] private List<Worker> workers;
     [SerializeField] private List<Spot> spots;
     [SerializeField] private List<Box> boxes;
@@ -71,6 +72,10 @@ public class ZoneController : MonoBehaviour
             OnChangeSystem?.Invoke();
         }
     }
+    private void FixedUpdate()
+    {
+        allDistance = GetAllDistanceWarkers(workers);
+    }
 
     private void RecalculateWorkerMovement()
     {
@@ -90,14 +95,19 @@ public class ZoneController : MonoBehaviour
     /// ///////////////////////////////////// Search //////////////////////////////////
     private Spot GetClosestSpot(Vector3 position)// rewrite with nawmesh distance
     {
-        if (spots.Count <= 0) return null;
+        if (spots.Count <= 0 || spots.Count <= 0) return null;
         float distance = spots.Min(x => (x.transform.position - position).magnitude);
         return spots.FirstOrDefault(x => (x.transform.position - position).magnitude <= distance);
+    }
+    private Spot GetRandomSpot(Vector3 position)
+    {
+        if (spots.Count <= 0 || spots.Count <= 0) return null;
+        return spots[Random.Range(0, spots.Count)];
     }
 
     private Box GetClosestBox(Vector3 position)
     {
-        if (boxes.Count <= 0) return null;
+        if (boxes.Count <= 0 || boxes.Count <= 0) return null;
         float distance = boxes.Min(x => (x.transform.position - position).magnitude);
         return boxes.FirstOrDefault(x => (x.transform.position - position).magnitude <= distance);
     }
@@ -107,6 +117,13 @@ public class ZoneController : MonoBehaviour
         if (boxes.Count <= 0 || boxes.Count <= 0) return null;
         var sortedBoxes = boxes.OrderBy(x => (x.transform.position - position).magnitude);
         return sortedBoxes.FirstOrDefault(x => !x.Worker && !x.IsUsed && x.gameObject.active);
+    }
+
+    private Box GetRandomFreeBox(Vector3 position)
+    {
+        if (boxes.Count <= 0 || boxes.Count <= 0) return null;
+        List<Box> filteredList = boxes.Where(x => !x.Worker && !x.IsUsed && x.gameObject.active).ToList();
+        return filteredList[Random.Range(0, filteredList.Count)];
     }
     /// ///////////////////////////////////// //////////////////////////////////
 
@@ -118,12 +135,14 @@ public class ZoneController : MonoBehaviour
     private void WorkerMoveToSpot(Worker worker)
     {
         Spot closestSpot = GetClosestSpot(worker.transform.position);
+        //Spot closestSpot = GetRandomSpot(worker.transform.position);
         if (closestSpot == null) return;
         worker.MoveToPointNavMesh(closestSpot.transform);
     }
     private void WorkerPutBox(Worker worker)
     {
         Box closestBox = GetClosestFreeBox(worker.transform.position);
+        //Box closestBox = GetRandomFreeBox(worker.transform.position);
         if (closestBox == null) return;
         worker.SetTargetBox(closestBox);
         worker.MoveToTargetNavMesh();
@@ -179,5 +198,12 @@ public class ZoneController : MonoBehaviour
     {
         spots.Remove(spot);
         spot.OnTakeBox -= RemoveBoxFromSystem;
+    }
+
+    private float GetAllDistanceWarkers(List<Worker> workers)
+    { 
+        float distance = 0;
+        workers.ForEach(worker => distance += worker.DistancePassed.Value);
+        return distance;
     }
 }
