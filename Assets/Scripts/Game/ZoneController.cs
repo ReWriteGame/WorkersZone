@@ -1,3 +1,4 @@
+using Modules.Score;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,7 +11,9 @@ using Random = UnityEngine.Random;
 public class ZoneController : MonoBehaviour
 {
     [SerializeField] private NavMeshSurface navMeshSurfaceZone;
-    [SerializeField] private float allDistance = 0;
+    [SerializeField] private ScoreCounter scoreCounterTotalDistance;
+    [SerializeField] private ScoreCounterVisual scoreCounterVisual;
+    [SerializeField] private bool useOptimizedAlgorithm = true;
     [SerializeField] private List<Worker> workers;
     [SerializeField] private List<Spot> spots;
     [SerializeField] private List<Box> boxes;
@@ -26,9 +29,12 @@ public class ZoneController : MonoBehaviour
         boxColliderZone.center = navMeshSurfaceZone.center;
         boxColliderZone.isTrigger = true;
 
+        scoreCounterVisual.SetScoreCounter(scoreCounterTotalDistance);
+
         OnChangeSystem += RecalculateWorkerMovement;
     }
 
+   
 
     private void OnTriggerEnter(Collider other)
     {
@@ -74,7 +80,9 @@ public class ZoneController : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        allDistance = GetAllDistanceWarkers(workers);
+        //allDistance = GetAllDistanceWarkers(workers);
+        scoreCounterTotalDistance.SetData(new ScoreCounterData(GetAllDistanceWarkers(workers), 0, 10000000));
+
     }
 
     private void RecalculateWorkerMovement()
@@ -134,15 +142,15 @@ public class ZoneController : MonoBehaviour
     }
     private void WorkerMoveToSpot(Worker worker)
     {
-        Spot closestSpot = GetClosestSpot(worker.transform.position);
-        //Spot closestSpot = GetRandomSpot(worker.transform.position);
+        Spot closestSpot = useOptimizedAlgorithm ? GetClosestSpot(worker.transform.position) : 
+                                                    GetRandomSpot(worker.transform.position);
         if (closestSpot == null) return;
         worker.Movement.MoveToPointNavMesh(closestSpot.transform);
     }
     private void WorkerPutBox(Worker worker)
     {
-        Box closestBox = GetClosestFreeBox(worker.transform.position);
-        //Box closestBox = GetRandomFreeBox(worker.transform.position);
+        Box closestBox = useOptimizedAlgorithm ? GetClosestFreeBox(worker.transform.position) :
+                                                    GetRandomFreeBox(worker.transform.position);
         if (closestBox == null) return;
         worker.SetTargetBox(closestBox);
         worker.Movement.MoveToTargetNavMesh();

@@ -31,6 +31,7 @@ public class Worker : MonoBehaviour
     {
         if (movement.Agent.isOnNavMesh) AddPassedDistance();
     }
+
     private void Awake()
     {
         movement.OnStartMoveWorker += OnStartMove;
