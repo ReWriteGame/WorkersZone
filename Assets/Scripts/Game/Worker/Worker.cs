@@ -105,4 +105,11 @@ public class Worker : MonoBehaviour
         distancePassed.IncreaseValue((lastPosition - currentPosition).magnitude);
         lastPosition = currentPosition;
     }
+
+    private void OnDrawGizmos()
+    {
+        if (targetBox == null) return;
+        Gizmos.color = Color.red;
+        Gizmos.DrawLine(transform.position, targetBox.transform.position);
+    }
 }

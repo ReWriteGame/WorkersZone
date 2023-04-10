@@ -1,6 +1,6 @@
+using Modules.Score;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -17,11 +17,20 @@ public class Box : MonoBehaviour
 
     private bool isUsed = false;
     public Worker worker = null;
+    private ScoreCounter distanceToSpot;
+    private ZoneController zoneController;
+    private Spot closestSpot;
 
-
-    public bool IsUsed { get => isUsed; set => isUsed = value; }
+    public bool IsUsed => isUsed;
     public Worker Worker => worker;
+    public ScoreCounter DistanceToSpot => distanceToSpot;
 
+    private void Awake()
+    {
+        distanceToSpot = new ScoreCounter();
+        zoneController = GameObject.FindObjectOfType<ZoneController>();
+        StartCoroutine(SelectClosestSpotRoutine());
+    }
 
     private void OnDestroy()
     {
@@ -66,5 +75,25 @@ public class Box : MonoBehaviour
         this.worker = null;
         //worker.ResetTargetBox();
         OnLoseWorker?.Invoke(worker);
+    }
+
+    private IEnumerator SelectClosestSpotRoutine()
+    {
+        WaitForSeconds delay = new WaitForSeconds(0.1f);
+        while (true)
+        {
+            yield return delay;
+            closestSpot = zoneController.GetClosestSpot(transform.position);
+            float distance = closestSpot ? Vector3.Distance(transform.position, closestSpot.transform.position) : 0;
+            distanceToSpot.SetData(new ScoreCounterData(distance, 0, float.PositiveInfinity));
+            
+        }
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (closestSpot == null) return;
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawLine(transform.position, closestSpot.transform.position);
     }
 }
