@@ -1,10 +1,11 @@
+using Modules.Score.Visual;
 using Tools.Animations;
 using UnityEngine;
 
 public class WorkerVisual : MonoBehaviour
 {
     [SerializeField] private Worker worker;
-    [SerializeField] private ScoreCounterVisual scoreCounterVisual;
+    [SerializeField] private ScoreCounterVisualText scoreCounterVisual;
     [SerializeField] private LoopRotateAnimation loopRoatateAnimation;
 
 

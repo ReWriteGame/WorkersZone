@@ -747,8 +747,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea165192702b75042bb04e3c2c040adb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  output: {fileID: 2870661494144041775}
-  numberOfCharacters: 1
+  valueLabel:
+    label: {fileID: 2870661494144041775}
+    textFormat: 0.0
+    centerSymbol: .
+  valueMinLabel:
+    label: {fileID: 0}
+    textFormat: 00.00
+    centerSymbol: .
+  valueMaxLabel:
+    label: {fileID: 0}
+    textFormat: 00.00
+    centerSymbol: .
+  showValueInPercent: 0
 --- !u!224 &1748761138283480298 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 8709627546543433254, guid: 6294a9ec8a336d34988ccc13c49b0a64,

@@ -15,7 +15,7 @@ public class Box : MonoBehaviour
     public Action<Worker> OnLoseWorker;
     public Action OnDestroyBox;
 
-    private bool isUsed = false;
+    public bool isUsed = false;
     public Worker worker = null;
     private ScoreCounter distanceToSpot;
     private ZoneController zoneController;

@@ -1,4 +1,5 @@
 using Modules.Score;
+using Modules.Score.Visual;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +21,7 @@ public class ZoneController : MonoBehaviour
 
     [SerializeField] private NavMeshSurface navMeshSurfaceZone;
     [SerializeField] private ScoreCounter scoreCounterTotalDistance;
-    [SerializeField] private ScoreCounterVisual scoreCounterVisual;
+    [SerializeField] private ScoreCounterVisualText scoreCounterVisual;
     [SerializeField] private SearchAlgorithm pathfindingAlgorithm;
     [SerializeField] private List<Worker> workers;
     [SerializeField] private List<Spot> spots;
@@ -108,6 +109,24 @@ public class ZoneController : MonoBehaviour
 
 
     /// ///////////////////////////////////// Search //////////////////////////////////
+
+    public Spot GetSpotLogic(Worker worker)
+    {
+        Spot closestSpot = null;
+        switch (pathfindingAlgorithm)
+        {
+            case SearchAlgorithm.Random:
+                closestSpot = GetRandomSpot(worker.transform.position);
+                break;
+            case SearchAlgorithm.Immediate:
+                closestSpot = GetClosestSpot(worker.transform.position);
+                break;
+            case SearchAlgorithm.Navmash:
+                closestSpot = GetClosestNavMashSpot(worker.transform.position);
+                break;
+        }
+        return closestSpot;
+    }
     public Spot GetClosestSpot(Vector3 position)//without navmash
     {
         if (spots.Count <= 0) return null;
@@ -127,6 +146,23 @@ public class ZoneController : MonoBehaviour
         return spots[Random.Range(0, spots.Count)];
     }
 
+    public Box GetBoxLogic(Worker worker)
+    {
+        Box closestBox = null;
+        switch (pathfindingAlgorithm)
+        {
+            case SearchAlgorithm.Random:
+                closestBox = GetRandomFreeBox(worker.transform.position);
+                break;
+            case SearchAlgorithm.Immediate:
+                closestBox = GetClosestFreeBox(worker.transform.position);
+                break;
+            case SearchAlgorithm.Navmash:
+                closestBox = GetClosestFreeNavMashBox(worker.transform.position);
+                break;
+        }
+        return closestBox;
+    }
     public Box GetClosestBox(Vector3 position)
     {
         if (boxes.Count <= 0 || boxes.Count <= 0) return null;
@@ -143,8 +179,10 @@ public class ZoneController : MonoBehaviour
     public Box GetClosestFreeBox(Vector3 position)
     {
         if (boxes.Count <= 0) return null;
-        var sortedBoxes = boxes.OrderBy(x => (x.transform.position - position).magnitude);
-        return sortedBoxes.FirstOrDefault(x => !x.Worker && !x.IsUsed && x.gameObject.active);
+        List<Box> sortedBoxes = boxes.OrderBy(x => (x.transform.position - position).magnitude).ToList();
+
+        Box targetBox = sortedBoxes.Find(x => !x.Worker && !x.IsUsed && x.gameObject.active);
+        return targetBox;
     }
     public Box GetRandomFreeBox(Vector3 position)
     {
@@ -183,40 +221,17 @@ public class ZoneController : MonoBehaviour
             worker.TakeTargetBox();
         else WorkerMoveToSpot(worker);
     }
+
     private void WorkerMoveToSpot(Worker worker)
     {
-        Spot closestSpot = null;                           
-        switch (pathfindingAlgorithm)
-        {
-            case SearchAlgorithm.Random:
-                closestSpot = GetRandomSpot(worker.transform.position);
-                break;
-            case SearchAlgorithm.Immediate:
-                closestSpot = GetClosestSpot(worker.transform.position);
-                break;
-            case SearchAlgorithm.Navmash:
-                closestSpot = GetClosestNavMashSpot(worker.transform.position);
-                break;
-        }
+        Spot closestSpot = GetSpotLogic(worker);
 
         if (closestSpot == null) return;
         worker.Movement.MoveToPointNavMesh(closestSpot.transform);
     }
     private void WorkerPutBox(Worker worker)
     {
-        Box closestBox = null;
-        switch (pathfindingAlgorithm)
-        {
-            case SearchAlgorithm.Random:
-                closestBox = GetRandomFreeBox(worker.transform.position);
-                break;
-            case SearchAlgorithm.Immediate:
-                closestBox = GetClosestFreeBox(worker.transform.position);
-                break;
-            case SearchAlgorithm.Navmash:
-                closestBox = GetClosestFreeNavMashBox(worker.transform.position);
-                break;
-        }
+        Box closestBox = GetBoxLogic(worker);
 
         if (closestBox == null) return;
         worker.SetTargetBox(closestBox);
@@ -226,7 +241,7 @@ public class ZoneController : MonoBehaviour
     private void StartWorkerInSystem(Worker worker)
     {
         if (worker.TargetBox) return;
-        worker.SetTargetBox(GetClosestFreeNavMashBox(worker.transform.position));
+        worker.SetTargetBox(GetBoxLogic(worker));
         worker.Movement.MoveToTargetNavMesh();
     }
 
@@ -282,18 +297,6 @@ public class ZoneController : MonoBehaviour
         return distance;
     }
 
-
-    /////////////////////////////////////////////////////////
-    ///
-    public static bool GetPath(NavMeshPath path, Vector3 fromPos, Vector3 toPos, int passableMask)
-    {
-        path.ClearCorners();
-
-        if (NavMesh.CalculatePath(fromPos, toPos, passableMask, path) == false)
-            return false;
-
-        return true;
-    }
 
     private float GetPathDistance(NavMeshPath path)// bad work if outside the zone
     {
